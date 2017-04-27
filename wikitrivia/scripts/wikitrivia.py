@@ -14,14 +14,18 @@ SAMPLE_ARTICLES = (
 
 @click.command()
 @click.argument('titles', nargs=-1)
+@click.option('--lang', default='en', help='Wikipedia language: en, es')
 @click.option('--output', type=click.File('w'), help='Output to JSON file')
-def generate_trivia(titles, output):
+def generate_trivia(titles, output, lang):
     """Generates trivia questions from wikipedia articles. If no
     titles are supplied, pulls from these sample articles:
 
     'Tony Bennett', 'Gauls', 'Scabbling', 'Henry V, Duke of Carinthia',
     'Ukrainian Women\'s Volleyball Super League'
     """
+
+    click.echo('Language: {0}'.format(lang))
+
     # Use the sample articles if the user didn't supply any
     if len(titles) == 0:
         titles = SAMPLE_ARTICLES
@@ -30,8 +34,8 @@ def generate_trivia(titles, output):
     questions = []
     for article in titles:
         click.echo('Analyzing \'{0}\''.format(article))
-        article = Article(title=article)
-        questions = questions + article.generate_trivia_sentences()
+        article = Article(title=article, lang=lang)
+        questions = questions + article.generate_trivia_sentences(lang=lang)
 
     # Output to stdout or JSON
     if output:
