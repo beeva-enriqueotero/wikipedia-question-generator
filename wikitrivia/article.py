@@ -88,7 +88,7 @@ class Article:
             for similar_word in my_similar_words:
                 similar_word = similar_word.replace('_', ' ')
 
-                if similar_word != word:
+                if similar_word != word and similar_word not in similar_words:
                     similar_words.append(similar_word)
 
         # Return a random subset of 4 elements. Or an empty subset to discard the question
