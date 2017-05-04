@@ -91,8 +91,12 @@ class Article:
                 if similar_word != word:
                     similar_words.append(similar_word)
 
-        # Return a random subset of 4 elements
-        similar_words = random.sample(similar_words,4)
+        # Return a random subset of 4 elements. Or an empty subset to discard the question
+        N = 4
+        if len(similar_words) < N:
+            similar_words = []
+        else:
+            similar_words = random.sample(similar_words,N)
         return similar_words
 
     def evaluate_sentence(self, sentence, lang):
