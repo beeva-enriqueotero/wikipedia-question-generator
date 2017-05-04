@@ -46,14 +46,30 @@ class Article:
 
         return trivia_sentences
 
+    # Method to detect gender. Required for spanish nouns
+    def detect_gender(self, word, lang):
+        gender = 'm'
+        if (lang != 'es'):
+            return gender
+
+        tag = sgt.pos_tag([word])[0][1]
+        if (tag and len(tag) > 2):
+            gender = tag[2]
+        else:
+            gender = 'x'
+
+        return gender
+
     def get_similar_words(self, word, lang):
         # In the absence of a better method, take the first synset
 
         word = word.lower()
 
+        gender = 'm'
         wnlang = 'eng'
         if (lang == 'es'):
             wnlang = 'spa'
+            gender = self.detect_gender(word, lang)
 
         synsets = wn.synsets(word, lang=wnlang, pos='n')
 
@@ -89,7 +105,9 @@ class Article:
                 similar_word = similar_word.replace('_', ' ')
 
                 if similar_word != word and similar_word not in similar_words:
-                    similar_words.append(similar_word)
+                    # Check gender coherence
+                    if (self.detect_gender(similar_word, lang) == gender):
+                        similar_words.append(similar_word)
 
         # Return a random subset of 4 elements. Or an empty subset to discard the question
         N = 4
