@@ -132,27 +132,12 @@ class Article:
         for word, tag in sentence.tags:
             # For now, only blank out non-proper nouns that don't appear in the article title
             if (lang =='en' and tag == 'NN') or (lang == 'es' and tag != None and tag.find('nc') == 0) and word not in self.page.title:
-                # Is it in a noun phrase? If so, blank out the last two words in that phrase
-                for phrase in sentence.noun_phrases:
-                    if phrase[0] == '\'':
-                        # If it starts with an apostrophe, ignore it
-                        # (this is a weird error that should probably
-                        # be handled elsewhere)
-                        break
+                replace_nouns.append(word)
 
-                    #if word in phrase:
-                        # Blank out the last two words in this phrase
-                    #    [replace_nouns.append(phrase_word) for phrase_word in phrase.split()[-2:]]
-                    #    break
-
-                # If we couldn't find the word in any phrases,
-                # replace it on its own
-                if len(replace_nouns) == 0:
-                    replace_nouns.append(word)
-                break
+        if len(replace_nouns) > 1:
+            replace_nouns = random.sample(replace_nouns,1)
 
         similar_words = []
-
         if len(replace_nouns) == 1:
             # If we're only replacing one word, use WordNet to find similar words
             similar_words = self.get_similar_words(replace_nouns[0], lang)
