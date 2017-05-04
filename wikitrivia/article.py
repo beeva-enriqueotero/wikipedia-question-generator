@@ -119,10 +119,10 @@ class Article:
                         # be handled elsewhere)
                         break
 
-                    if word in phrase:
+                    #if word in phrase:
                         # Blank out the last two words in this phrase
-                        [replace_nouns.append(phrase_word) for phrase_word in phrase.split()[-2:]]
-                        break
+                    #    [replace_nouns.append(phrase_word) for phrase_word in phrase.split()[-2:]]
+                    #    break
 
                 # If we couldn't find the word in any phrases,
                 # replace it on its own
@@ -130,22 +130,22 @@ class Article:
                     replace_nouns.append(word)
                 break
 
-        if len(replace_nouns) == 0:
-            # Return none if we found no words to replace
+        similar_words = []
+
+        if len(replace_nouns) == 1:
+            # If we're only replacing one word, use WordNet to find similar words
+            similar_words = self.get_similar_words(replace_nouns[0], lang)
+
+        if len(replace_nouns) == 0 or len(similar_words) == 0:
+            # Return none if we found no words to replace or no choices to show
             return None
 
         trivia = {
             'title': self.page.title,
             'url': self.page.url,
-            'answer': ' '.join(replace_nouns)
+            'answer': ' '.join(replace_nouns),
+            'similar_words': similar_words
         }
-
-        if len(replace_nouns) == 1:
-            # If we're only replacing one word, use WordNet to find similar words
-            trivia['similar_words'] = self.get_similar_words(replace_nouns[0], lang)
-        else:
-            # If we're replacing a phrase, don't bother - it's too unlikely to make sense
-            trivia['similar_words'] = []
 
         # Blank out our replace words (only the first occurrence of the word in the sentence)
         replace_phrase = ' '.join(replace_nouns)
