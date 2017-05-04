@@ -10,6 +10,7 @@ from . import spaghetti as sgt
 import re
 import wikipedia
 import random
+from itertools import chain
 
 class Article:
     """Retrieves and analyzes wikipedia articles"""
@@ -88,14 +89,16 @@ class Article:
         hyponyms = hypernym.hyponyms()
 
         # Alternative 2 (new): Get the hyponyms for all the hypernyms for all the synsets
-        l = [synset.hypernyms() for synset in wn.synsets(word, lang=wnlang, pos='n')]
+        # First get all the synonyms and lemmas to be removed from distractors
+        synonyms = wn.synsets(word, lang=wnlang, pos='n')
+        lemmas = set(chain.from_iterable([word.lemma_names(wnlang) for word in synonyms]))
+
+        l = [synset.hypernyms() for synset in synonyms]
         hypernyms = [item for sublist in l for item in sublist]
 
-        #hypernyms = synset.hypernyms()
         l = [hypernym.hyponyms() for hypernym in hypernyms]
         hyponyms2 = [item for sublist in l for item in sublist]
 
-        # Take the name of the last lemma for the first 5 hyponyms
         similar_words = []
 
         # Use alternative 2
@@ -106,7 +109,7 @@ class Article:
 
                 if similar_word != word and similar_word not in similar_words:
                     # Check gender coherence
-                    if (self.detect_gender(similar_word, lang) == gender):
+                    if (self.detect_gender(similar_word, lang) == gender) and similar_word not in lemmas:
                         similar_words.append(similar_word)
 
         # Return a random subset of 4 elements. Or an empty subset to discard the question
