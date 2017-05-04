@@ -9,6 +9,7 @@ from . import spaghetti as sgt
 
 import re
 import wikipedia
+import random
 
 class Article:
     """Retrieves and analyzes wikipedia articles"""
@@ -23,7 +24,7 @@ class Article:
         sentences = self.summary.sentences
         if lang=='es':
             # Trivial sentence tokenizer
-            raw_sentences = self.page.summary.split('.')
+            raw_sentences = sentences #self.page.summary.split('.')
             # Trivial word tokenizer
             raw_sentences = [x.split() for x in raw_sentences if len(x)>0]
             # Spanish POS tagger
@@ -45,33 +46,53 @@ class Article:
 
         return trivia_sentences
 
-    def get_similar_words(self, word):
+    def get_similar_words(self, word, lang):
         # In the absence of a better method, take the first synset
-        synsets = wn.synsets(word, pos='n')
+
+        word = word.lower()
+
+        wnlang = 'eng'
+        if (lang == 'es'):
+            wnlang = 'spa'
+
+        synsets = wn.synsets(word, lang=wnlang, pos='n')
 
         # If there aren't any synsets, return an empty list
         if len(synsets) == 0:
             return []
-        else:
-            synset = synsets[0]
+
+        # Alternative 1 (old): Get the hyponyms for the first hypernym for the first synset
+        # Return first value
+        synset = synsets[0]
 
         # Get the hypernym for this synset (again, take the first)
-        hypernym = synset.hypernyms()[0]
+        hypernym = synset.hypernyms()[0]#.hypernyms()[0]
 
         # Get some hyponyms from this hypernym
         hyponyms = hypernym.hyponyms()
 
-        # Take the name of the first lemma for the first 8 hyponyms
+        # Alternative 2 (new): Get the hyponyms for all the hypernyms for all the synsets
+        l = [synset.hypernyms() for synset in wn.synsets(word, lang=wnlang, pos='n')]
+        hypernyms = [item for sublist in l for item in sublist]
+
+        #hypernyms = synset.hypernyms()
+        l = [hypernym.hyponyms() for hypernym in hypernyms]
+        hyponyms2 = [item for sublist in l for item in sublist]
+
+        # Take the name of the last lemma for the first 5 hyponyms
         similar_words = []
-        for hyponym in hyponyms:
-            similar_word = hyponym.lemmas()[0].name().replace('_', ' ')
 
-            if similar_word != word:
-                similar_words.append(similar_word)
+        # Use alternative 2
+        for hyponym in hyponyms2:
+            my_similar_words = hyponym.lemma_names(wnlang)
+            for similar_word in my_similar_words:
+                similar_word = similar_word.replace('_', ' ')
 
-            if len(similar_words) == 8:
-                break
+                if similar_word != word:
+                    similar_words.append(similar_word)
 
+        # Return a random subset of 4 elements
+        similar_words = random.sample(similar_words,4)
         return similar_words
 
     def evaluate_sentence(self, sentence, lang):
@@ -117,7 +138,7 @@ class Article:
 
         if len(replace_nouns) == 1:
             # If we're only replacing one word, use WordNet to find similar words
-            trivia['similar_words'] = self.get_similar_words(replace_nouns[0])
+            trivia['similar_words'] = self.get_similar_words(replace_nouns[0], lang)
         else:
             # If we're replacing a phrase, don't bother - it's too unlikely to make sense
             trivia['similar_words'] = []
