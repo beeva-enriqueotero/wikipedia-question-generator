@@ -63,16 +63,16 @@ You can use the project locally (and quickly) through [Docker](https://www.docke
 
 ### Installing with Docker
 
-If you just want to run the tool, and don't want to modify it, just pull the latest image from [Docker Hub](https://registry.hub.docker.com/u/atbaker/wikipedia-question-generator/):
+If you just want to run the tool, and don't want to modify it, just pull the latest image from [Docker Hub](https://registry.hub.docker.com/u/beevaenriqueotero/wikipedia-question-generator/):
 
 ```bash
-$ docker pull atbaker/wikipedia-question-generator
+$ [sudo] docker pull beevaenriqueotero/wikipedia-question-generator
 ```
 
 Then, run the image with:
 
 ```bash
-$ docker run atbaker/wikipedia-question-generator --help
+$ [sudo] docker run beevaenriqueotero/wikipedia-question-generator --help
 Usage: wikitrivia [OPTIONS] [TITLES]...
 
   Generates trivia questions from wikipedia articles. If no titles are
@@ -89,7 +89,7 @@ Options:
 To make running the container less cumbersome, you can alias the `docker run` command:
 
 ```bash
-$ alias wikitrivia='docker run atbaker/wikipedia-question-generator'
+$ alias wikitrivia='[sudo] docker run beevaenriqueotero/wikipedia-question-generator'
 $ wikitrivia --help
 Usage: wikitrivia [OPTIONS] [TITLES]...
 ```
