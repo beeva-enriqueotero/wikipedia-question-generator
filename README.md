@@ -151,22 +151,4 @@ $ wikitrivia --output scotty.json 'James Doohan'
 Methodology
 -----------
 
-Though I tried a few different approaches when developing this tool, in the end I had the most success with a rather simple methodology.
-
-### Finding the right ___________'s
-
-1. **Only consider sentences in the summary section of an article.** Sentences from the body often didn't make sense out of context.
-1. **Never use the first sentence of the summary.** It's usually too straightforward to make interesting trivia.
-1. **Don't use a sentence that starts with an adverb.** They usually depend too heavily on the idea of the previous sentence to make sense out of context.
-1. **Blank out the first common noun in the sentence (e.g. 'painter', 'infantryman').** Proper nouns (e.g. 'Frank Sinatra', 'The White House') usually seemed too easy to guess when given the title of the article and the other words in the sentence.
-1. **If that noun is part of a noun phrase, blank out the last two words of the phrase**. Blanking out just one word seemed too easy if the phrase was recognizable.
-
-### Creating decoy answers
-
-For sentences where just one word was blanked out, I also used [WordNet](http://wordnet.princeton.edu/) to find similar words to the answer (the blanked out word). These words provide decoy answers during the trivia game.
-
-My approach is to find the hypernym of the answer, and then select other hyponyms of that hypernym.
-
-In the example in the "Sample usage" section, the correct answer is **painter**. The hypernym of painter is **artist**. The hyponyms I found for **artist** appear in the `similar_words` array in the output: "classic", "classicist", "constructivist", "decorator", "draftsman", "etcher", "expressionist", "illustrator".
-
-Clearly there's still much room for improvement in all respsects of the methodology, but overall I was impressed with how far I could get with [TextBlob](http://textblob.readthedocs.org/en/dev/), [NLTK](http://www.nltk.org/), and an introductory understanding of NLP.
+More info about original methodology in https://github.com/atbaker/wikipedia-question-generator#methodology
