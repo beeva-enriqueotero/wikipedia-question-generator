@@ -14,6 +14,7 @@ RUN pip install -r requirements.txt
 # so Docker doesn't rebuild this step every time our source
 # code changes
 RUN python -m textblob.download_corpora
+RUN python -c "import nltk; nltk.download('cess_esp')"
 
 COPY . /usr/src/app
 RUN pip install -e .
