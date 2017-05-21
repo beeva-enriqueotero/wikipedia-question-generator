@@ -105,6 +105,7 @@ $ pyvenv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
 $ python -m textblob.download_corpora
+$ python -c "import nltk; nltk.download(['cess_esp', 'omw'])"
 ```
 
 Install the command line tool so you can use the tool easily:
