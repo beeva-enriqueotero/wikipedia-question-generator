@@ -105,9 +105,8 @@ class Article:
         for hyponym in hyponyms2:
             my_similar_words = hyponym.lemma_names(wnlang)
             for similar_word in my_similar_words:
-                similar_word = similar_word.replace('_', ' ')
 
-                if similar_word != word and similar_word not in similar_words:
+                if (similar_word.find('_') == -1) and similar_word != word and similar_word not in similar_words:
                     # Check gender coherence
                     if (self.detect_gender(similar_word, lang) == gender) and similar_word not in lemmas:
                         similar_words.append(similar_word)
